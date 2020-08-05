@@ -14,13 +14,13 @@ import Pagination from './components/Pagination'
 
         [x] Пагинация (!!!максимум 50 элементов на страницу!!!)
 
-        [ ] Добавление нового юзера
-            [ ] Над таблицей кнопка "Добавить"
-            [ ] По нажатию на кнопку "Добавить" появляется форма добавления ряда
-            [ ] После заполнения всех инпутов активируется кнопка "Добавить в таблицу", вставляет ряд в НАЧАЛО таблицы
+        [x] Добавление нового юзера
+            [x] Над таблицей кнопка "Добавить"
+            [x] По нажатию на кнопку "Добавить" появляется форма добавления ряда
+            [x] После заполнения всех инпутов активируется кнопка "Добавить в таблицу", вставляет ряд в НАЧАЛО таблицы
 */
 
-const MAX_IN_PAGE = 50
+const MAX_IN_PAGE = 5
 
 function App() {
 
@@ -30,15 +30,18 @@ function App() {
     const [user, setUser] = useState({})
 
     useEffect(() => {
-        const url = 'http://www.filltext.com/?rows=1000&id={number|1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}'
+        const url = 'http://www.filltext.com/?rows=35&id={number|10}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}'
         fetch(url)
             .then(res => res.json())
             .then(res => {
-                console.log(res)
                 setData(res)
             })
             .catch(err => { alert('An error occured. Please try to refresh the page') })
     }, [])
+
+    const onAddData = (newData) => {
+        setData([newData, ...data])
+    }
 
     const getPage = useCallback((page) => {
         const begin = (page - 1) * MAX_IN_PAGE
@@ -87,16 +90,17 @@ function App() {
 
     return (
         <div className='App container'>
-            <Table data={users} setUser={setUser} onSort={onSort} onSearch={onSearch} />
-            {users[0].id ? <Pagination lastPage={searchResult === null ? Math.ceil(data.length / MAX_IN_PAGE) : Math.ceil(searchResult.length / MAX_IN_PAGE)} getPage={getPage} /> : null}
+            <Table data={users} setUser={setUser} onSort={onSort} onSearch={onSearch} onAddData={onAddData} />
+            {users[0].id !== (null || undefined) ? <Pagination lastPage={searchResult === null ? Math.ceil(data.length / MAX_IN_PAGE) : Math.ceil(searchResult.length / MAX_IN_PAGE)} getPage={getPage} /> : null}
             { // вынести в компонент
-                user.id ?
-                    <div>
-                        <div>first name: {user.firstName}</div>
-                        <div>id: {user.id}</div>
-                        <div>last name: {user.lastName}</div>
-                        <div>address: {`${user.address.streetAddress}, ${user.address.city}, ${user.address.state}, ${user.address.zip}`}</div>
-                        <div>description: {user.description}</div>
+                user.id !== (null || undefined) ?
+                    <div className='card p-4'>
+                        <p>Выбран пользователь <b>{user.firstName} {user.lastName}</b></p>
+                        <p>Описание: <textarea value={user.description} readOnly style={{ resize: 'none' }} className='form-control'></textarea> </p>
+                        <p>Адрес проживания: <b>{user.address.streetAddress}</b></p>
+                        <p>Город: <b>{user.address.city}</b></p>
+                        <p>Провинция/штат: <b>{user.address.state}</b></p>
+                        <p>Индекс: <b>{user.address.zip}</b></p>
                     </div> : null
             }
         </div>

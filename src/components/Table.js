@@ -1,10 +1,19 @@
 import React, { useState } from 'react'
 import Search from './Search'
 import { Skeleton } from '@material-ui/lab'
+import Modal from 'react-bootstrap/Modal'
+import AddForm from './AddForm'
+
+import './table.css'
 
 const Table = (props) => {
 
     const [sortBy, setSortBy] = useState({})
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const handleModal = () => {
+        setIsModalOpen(!isModalOpen)
+    }
 
     const onHeadClick = (id) => {
         const newSortBy = {
@@ -16,9 +25,28 @@ const Table = (props) => {
         setSortBy(newSortBy)
     }
 
+    const handleAddData = (data) => {
+        setSortBy({})
+        props.onAddData(data)
+    }
+
     return (
         <React.Fragment>
-            <Search onSearch={props.onSearch} />
+            <div className='container form-row d-flex mt-2'>
+                <button
+                    className='btn btn-success mr-auto'
+                    onClick={handleModal}
+                >
+                    Добавить
+                </button>
+                <Search onSearch={props.onSearch} />
+            </div>
+            <Modal show={isModalOpen} onHide={handleModal} dialogClassName='addFormModal'>
+                <Modal.Header closeButton>
+                    <Modal.Title>Добавление нового ряда</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{<AddForm onAddData={handleAddData} />}</Modal.Body>
+            </Modal>
             <table className='table table-striped col-12 border p-3 mt-3'>
                 <thead>
                     <tr className='d-flex user-select-none'>
@@ -33,7 +61,7 @@ const Table = (props) => {
                     {
                         props.data.map((user, idx) =>
                             <tr key={idx} className='d-flex' onClick={() => {
-                                if (user.id) props.setUser(user)
+                                if (user.id !== (null || undefined)) props.setUser(user)
                             }}>
                                 <td className='col-2'>
                                     {user.id !== (null || undefined) ? user.id : <Skeleton animation={user.animation} />}

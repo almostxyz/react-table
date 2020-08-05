@@ -8,9 +8,14 @@ const Search = props => {
         setQuery(event.target.value)
     }
 
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        props.onSearch(query)
+    }
+
     return (
-        <div className='form-group form-row col-6 mt-4'>
-            <div className='col'>
+        <form className='form-row col-4'>
+            <div className='col-9'>
                 <input
                     className='form-control'
                     type='text'
@@ -21,10 +26,10 @@ const Search = props => {
 
                 </input>
             </div>
-            <div className='col'>
-                <button className='btn btn-success' type='submit' onClick={() => props.onSearch(query)}>Найти</button>
+            <div className='col-3'>
+                <button className='btn btn-info' type='submit' onClick={handleSubmit}>Найти</button>
             </div>
-        </div>
+        </form>
     )
 }
 
