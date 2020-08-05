@@ -20,7 +20,7 @@ import Pagination from './components/Pagination'
             [x] После заполнения всех инпутов активируется кнопка "Добавить в таблицу", вставляет ряд в НАЧАЛО таблицы
 */
 
-const MAX_IN_PAGE = 5
+const MAX_IN_PAGE = 50
 
 function App() {
 
@@ -30,7 +30,7 @@ function App() {
     const [user, setUser] = useState({})
 
     useEffect(() => {
-        const url = 'http://www.filltext.com/?rows=35&id={number|10}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}'
+        const url = 'http://www.filltext.com/?rows=1000&id={number|1000}&firstName={firstName}&delay=3&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}'
         fetch(url)
             .then(res => res.json())
             .then(res => {
