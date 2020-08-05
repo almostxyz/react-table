@@ -32,7 +32,7 @@ const Pagination = props => {
                         <label
                             className={`btn btn-outline-info ${page === idx + 1 ? ' active' : null}`}
                             key={idx + 1}>
-                            <input
+                            <input  
                                 type="radio"
                                 name="pages"
                                 id={idx + 1}
