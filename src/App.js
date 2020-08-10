@@ -20,13 +20,9 @@ import Pagination from './components/Pagination'
             [x] После заполнения всех инпутов активируется кнопка "Добавить в таблицу", вставляет ряд в НАЧАЛО таблицы
 */
 
-const MAX_IN_PAGE = 50
-
 function App() {
 
     const [data, setData] = useState([])
-    const [searchResult, setSearchResult] = useState(null)
-    const [users, setUsers] = useState(Array.from(Array(MAX_IN_PAGE), () => 0))
     const [user, setUser] = useState({})
 
     useEffect(() => {
@@ -39,59 +35,9 @@ function App() {
             .catch(err => { alert('An error occured. Please try to refresh the page') })
     }, [])
 
-    const onAddData = (newData) => {
-        setData([newData, ...data])
-    }
-
-    const getPage = useCallback((page) => {
-        const begin = (page - 1) * MAX_IN_PAGE
-        const end = page * MAX_IN_PAGE
-        let newUsers = searchResult === null ? data.slice(begin, end) : searchResult.slice(begin, end)
-        while (newUsers.length < MAX_IN_PAGE) {
-            newUsers.push({ animation: false })
-        }
-        // чтоб не изменялся размер таблицы
-        setUsers(newUsers)
-    }, [data, searchResult])
-
-    const onSort = (id, ascending) => {
-        const sortFn = (a, b) => {
-            const aProp = a[Object.keys(a)[id]]
-            const bProp = b[Object.keys(b)[id]]
-            if (aProp > bProp)
-                return ascending ? 1 : -1
-            if (bProp > aProp)
-                return ascending ? -1 : 1
-            return 0
-        }
-        setData([...data].sort(sortFn))
-        if (searchResult !== null)
-            setSearchResult([...searchResult].sort(sortFn))
-    }
-
-    const onSearch = (query) => {
-        if (query.replace(/ /g, '') === '')
-            setSearchResult(null)
-        else {
-            const result = data.filter((user) =>
-                user.id.toString().toLowerCase().includes(query.toLowerCase()) ||
-                user.firstName.toLowerCase().includes(query.toLowerCase()) ||
-                user.lastName.toLowerCase().includes(query.toLowerCase()) ||
-                user.email.toLowerCase().includes(query.toLowerCase()) ||
-                user.phone.toLowerCase().includes(query.toLowerCase())
-            )
-            setSearchResult(result)
-        }
-    }
-
-    useEffect(() => {
-        getPage(1)
-    }, [getPage])
-
     return (
         <div className='App container'>
-            <Table data={users} setUser={setUser} onSort={onSort} onSearch={onSearch} onAddData={onAddData} />
-            {users[0].id !== (null || undefined) ? <Pagination lastPage={searchResult === null ? Math.ceil(data.length / MAX_IN_PAGE) : Math.ceil(searchResult.length / MAX_IN_PAGE)} getPage={getPage} /> : null}
+            <Table data={data} setData={setData} setUser={setUser}/>
             { // вынести в компонент
                 user.id !== (null || undefined) ?
                     <div className='card p-4'>
